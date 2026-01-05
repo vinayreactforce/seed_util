@@ -1,21 +1,37 @@
 import React from 'react';
 import { Pressable, Text } from 'react-native';
 import { StyleSheet } from 'react-native-unistyles';
+import { moderateScale } from '../theme/responsiveSize';
 
 interface Props {
   title: string;
   onPress: () => void;
   variant?: 'brand' | 'neutral' | 'destructive';
+  type?: 'outline' | 'solid';
+  size?: 'small' | 'medium' | 'large' | 'xLarge';
+  circular?: boolean;
   isDisabled?: boolean;
 }
 
-const Button = ({ title, onPress, variant = 'brand', isDisabled }: Props) => {
-  styles.useVariants({ variant });
+const Button = ({
+  title,
+  onPress,
+  variant = 'brand',
+  type = 'solid',
+  size,
+  circular = false,
+  isDisabled,
+}: Props) => {
+  styles.useVariants({ variant, type, size, circular });
   return (
     <Pressable
       onPress={onPress}
       disabled={isDisabled}
-      style={[styles.container, isDisabled && styles.disabled]}
+      style={({ pressed }) => [
+        styles.container,
+        isDisabled && styles.disabled,
+        pressed && styles.pressed,
+      ]}
     >
       <Text style={[styles.text, isDisabled && styles.textDisabled]}>
         {title}
@@ -30,7 +46,7 @@ export default Button;
 const styles = StyleSheet.create(theme => ({
   container: {
     paddingHorizontal: 16,
-    paddingVertical: 10,
+    minHeight: moderateScale(40),
     borderRadius: 4,
     alignItems: 'center',
     justifyContent: 'center',
@@ -50,18 +66,80 @@ const styles = StyleSheet.create(theme => ({
           borderColor: theme.colors.error,
         },
       },
+      circular: {
+        true: {
+          borderRadius: moderateScale(30),
+        },
+      },
+      size: {
+        small: {
+          minHeight: moderateScale(32),
+        },
+        medium: {
+          minHeight: moderateScale(40),
+        },
+        large: {
+          minHeight: moderateScale(48),
+        },
+        xLarge: {
+          minHeight: moderateScale(56),
+        },
+      },
+      type: {
+        outline: {
+          backgroundColor: theme.colors.appBackground,
+        },
+        solid: {},
+      },
     },
   },
   text: {
-    fontSize: 14,
-    fontFamily: theme.fontFamily.medium,
+    fontSize: theme.textSizeVariants.bodyMedium,
+    fontFamily: theme.fontFamily.semiBold,
     variants: {
       variant: {
         brand: { color: '#FFFFFF' },
         neutral: { color: theme.colors.primaryBrand },
         destructive: { color: '#FFFFFF' },
       },
+      size:{
+        small:{
+          fontSize: theme.textSizeVariants.bodySmall,
+        },
+        medium:{
+          fontSize: theme.textSizeVariants.bodyMedium,
+        },
+        large:{
+          fontSize: theme.textSizeVariants.bodyLarge,
+        },
+        xLarge:{
+          fontSize: theme.textSizeVariants.bodyXLarge,
+        },
+      },
     },
+    compoundVariants: [
+      {
+        variant: 'brand',
+        type: 'outline',
+        styles: {
+          color: theme.colors.primaryBrand,
+        },
+      },
+      {
+        variant: 'neutral',
+        type: 'outline',
+        styles: {
+          color: theme.colors.border,
+        },
+      },
+      {
+        variant: 'destructive',
+        type: 'outline',
+        styles: {
+          color: theme.colors.error,
+        },
+      },
+    ],
   },
   disabled: {
     backgroundColor: theme.colors.disabledBackground,
@@ -69,5 +147,9 @@ const styles = StyleSheet.create(theme => ({
   },
   textDisabled: {
     color: theme.colors.disabled,
+  },
+  pressed: {
+    opacity: 0.7,
+    transform: [{ scale: 0.998 }],
   },
 }));

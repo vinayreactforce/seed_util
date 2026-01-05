@@ -85,71 +85,20 @@ export const lightTheme = {
     preInvoiceText: '#2782F9',
     preInvoiceBackground: '#E3F4FF',
   },
-  typography: {
-    large: {
-      fontSize: moderateScale(16),
-      lineHeight: moderateScale(20),
-    },
-    medium: {
-      fontSize: moderateScale(14),
-      lineHeight: moderateScale(20),
-    },
-    small: {
-      fontSize: moderateScale(11),
-      lineHeight: moderateScale(16),
-    },
-    xSmall: {
-      fontSize: moderateScale(13),
-      lineHeight: moderateScale(16),
-    },
-    bodyLarge: {
-      fontSize: moderateScale(20),
-      lineHeight: moderateScale(24),
-    },
-    bodyMedium: {
-      fontSize: moderateScale(16),
-      lineHeight: moderateScale(20),
-    },
-    bodySmall: {
-      fontSize: moderateScale(12),
-      lineHeight: moderateScale(16),
-    },
-    bodyXSmall: {
-      fontSize: moderateScale(11),
-      lineHeight: moderateScale(14),
-    },
-    bodyXXSmall: {
-      fontSize: moderateScale(10),
-      lineHeight: moderateScale(14),
-    },
-    titleLarge: {
-      fontSize: moderateScale(22),
-      lineHeight: moderateScale(28),
-    },
-    titleMedium: {
-      fontSize: moderateScale(16),
-      lineHeight: moderateScale(24),
-    },
-    titleSmall: {
-      fontSize: moderateScale(14),
-      lineHeight: moderateScale(20),
-    },
-    headlineLarge: {
-      fontSize: moderateScale(32),
-      lineHeight: moderateScale(40),
-    },
-    headlineMedium: {
-      fontSize: moderateScale(28),
-      lineHeight: moderateScale(36),
-    },
-    headlineSmall: {
-      fontSize: moderateScale(24),
-      lineHeight: moderateScale(32),
-    },
-    xssmall: {
-      fontSize: moderateScale(10),
-      lineHeight: moderateScale(14),
-    },
+  textSizeVariants: {
+    headlineLarge:moderateScale(32),
+    headlineMedium:moderateScale(28),
+    headlineSmall:moderateScale(24),
+    bodyXLarge:moderateScale(20),
+    bodyLarge:moderateScale(16),
+    bodyMedium:moderateScale(14),
+    bodySmall:moderateScale(12),
+    labelLarge:moderateScale(16),
+    labelMedium:moderateScale(14),
+    labelSmall:moderateScale(12),
+    captionLarge:moderateScale(12),
+    captionMedium:moderateScale(10),
+    captionSmall:moderateScale(8),
   },
   spacing: {
     sm: moderateScale(4),
@@ -253,71 +202,20 @@ export const darkTheme = {
     preInvoiceText: '#A5D8FF',
     preInvoiceBackground: '#0D3B66',
   },
-  typography: {
-    large: {
-      fontSize: moderateScale(16),
-      lineHeight: moderateScale(20),
-    },
-    medium: {
-      fontSize: moderateScale(14),
-      lineHeight: moderateScale(20),
-    },
-    small: {
-      fontSize: moderateScale(11),
-      lineHeight: moderateScale(16),
-    },
-    xSmall: {
-      fontSize: moderateScale(13),
-      lineHeight: moderateScale(16),
-    },
-    bodyLarge: {
-      fontSize: moderateScale(20),
-      lineHeight: moderateScale(24),
-    },
-    bodyMedium: {
-      fontSize: moderateScale(16),
-      lineHeight: moderateScale(20),
-    },
-    bodySmall: {
-      fontSize: moderateScale(12),
-      lineHeight: moderateScale(16),
-    },
-    bodyXSmall: {
-      fontSize: moderateScale(11),
-      lineHeight: moderateScale(14),
-    },
-    bodyXXSmall: {
-      fontSize: moderateScale(10),
-      lineHeight: moderateScale(14),
-    },
-    titleLarge: {
-      fontSize: moderateScale(22),
-      lineHeight: moderateScale(28),
-    },
-    titleMedium: {
-      fontSize: moderateScale(16),
-      lineHeight: moderateScale(24),
-    },
-    titleSmall: {
-      fontSize: moderateScale(14),
-      lineHeight: moderateScale(20),
-    },
-    headlineLarge: {
-      fontSize: moderateScale(32),
-      lineHeight: moderateScale(40),
-    },
-    headlineMedium: {
-      fontSize: moderateScale(28),
-      lineHeight: moderateScale(36),
-    },
-    headlineSmall: {
-      fontSize: moderateScale(24),
-      lineHeight: moderateScale(32),
-    },
-    xssmall: {
-      fontSize: moderateScale(10),
-      lineHeight: moderateScale(14),
-    },
+  textSizeVariants: {
+    headlineLarge:moderateScale(32),
+    headlineMedium:moderateScale(28),
+    headlineSmall:moderateScale(24),
+    bodyXLarge:moderateScale(20),
+    bodyLarge:moderateScale(16),
+    bodyMedium:moderateScale(14),
+    bodySmall:moderateScale(12),
+    labelLarge:moderateScale(16),
+    labelMedium:moderateScale(14),
+    labelSmall:moderateScale(12),
+    captionLarge:moderateScale(12),
+    captionMedium:moderateScale(10),
+    captionSmall:moderateScale(8),
   },
   spacing: {
     sm: moderateScale(4),

@@ -1,6 +1,6 @@
 export default {
-    bold:"Lato-Bold",
-    medium:"Lato-Medium",
-    semiBold:"Lato-SemiBold",
-    regular:"Lato-Regular"
+    bold:"OpenSans-Bold",
+    semiBold:"OpenSans-SemiBold",
+    regular:"OpenSans-Regular",
+    light:"OpenSans-Light"
 }

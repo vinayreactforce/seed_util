@@ -6,8 +6,8 @@
  */
 
 import { NewAppScreen } from '@react-native/new-app-screen';
-import {  StatusBar, StyleSheet, useColorScheme, View } from 'react-native';
-import { open, } from '@op-engineering/op-sqlite';
+import { StatusBar, StyleSheet, useColorScheme, View } from 'react-native';
+import { open } from '@op-engineering/op-sqlite';
 import {
   SafeAreaProvider,
   useSafeAreaInsets,
@@ -23,23 +23,19 @@ function App() {
   const init = async () => {
     try {
       const myKey = await getMyKey();
-      const db= await open({name: DB_KEYS.DB_NAME,encryptionKey: myKey});
-      alert(JSON.stringify(db));
+      const db = await open({ name: DB_KEYS.DB_NAME, encryptionKey: myKey });
+
       // const db = open({name: 'mydbw',encryptionKey: 'myEncryptiownKdey'});
-      
-  
-  
     } catch (error) {
       console.log(error);
       alert(error);
     }
-    
-  }
-  useEffect(()=>{
+  };
+  useEffect(() => {
     init();
-  },[])
+  }, []);
 
-  console.log(`The is jjjj`)
+  console.log(`The is jjjj`);
 
   return (
     <SafeAreaProvider>
@@ -54,8 +50,8 @@ function AppContent() {
 
   return (
     <View style={styles.container}>
-      <View style={{marginTop: 100}} />
-      <Button  title="Click me" onPress={() => alert('Button pressed')} />
+      <View style={{ marginTop: 100 }} />
+      <Button title="Click me" onPress={() => alert('Button pressed')} />
       <NewAppScreen
         templateFileName="App.tsx"
         safeAreaInsets={safeAreaInsets}
