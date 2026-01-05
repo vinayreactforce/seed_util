@@ -48,7 +48,7 @@ const styles = StyleSheet.create(theme => ({
     paddingHorizontal: 16,
     minHeight: moderateScale(40),
     borderRadius: 4,
-    alignItems: 'center',
+    
     justifyContent: 'center',
     borderWidth: 1,
     variants: {
@@ -96,6 +96,8 @@ const styles = StyleSheet.create(theme => ({
   text: {
     fontSize: theme.textSizeVariants.bodyMedium,
     fontFamily: theme.fontFamily.semiBold,
+    textTransform: 'uppercase', // Optional for buttons
+    textAlign: 'center',
     variants: {
       variant: {
         brand: { color: '#FFFFFF' },

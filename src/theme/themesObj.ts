@@ -35,7 +35,6 @@ export const lightTheme = {
     opacity50: 'rgba(1,1,1,0.5)',
     textInputColor: 'rgba(217, 217, 217,0.2)',
     darkwhite: '#000000',
-    primary: 'rgba(16, 16, 20, 1)',
     inverse: 'rgba(255, 255, 255, 1)',
     gradient1: 'rgba(255, 190, 190, 1)',
     gradient2: 'rgba(255, 255, 255, 1)',
@@ -150,7 +149,7 @@ export const darkTheme = {
     opacity50: 'rgba(201, 201, 201,0.5)',
     textInputColor: '#000000',
     darkwhite: '#ffffff',
-    primary: 'rgba(255, 255, 255, 1)',
+    
     inverse: 'rgba(16, 16, 20, 1)',
     gradient1: 'rgba(124, 0, 2, 1)',
     gradient2: 'rgba(16, 16, 20, 1)',
