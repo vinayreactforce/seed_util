@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, TouchableOpacity, Image } from 'react-native';
+import { View, TouchableOpacity, Image, StyleProp, ViewStyle } from 'react-native';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -15,9 +15,12 @@ import { moderateScale } from '../theme/responsiveSize';
 interface SmartCollapsibleProps {
   title: string;
   children: React.ReactNode;
+  containerStyle?: StyleProp<ViewStyle>;
+  headerStyle?: StyleProp<ViewStyle>;
+  bodyStyle?: StyleProp<ViewStyle>;
 }
 
-export default function Collapsible({ title, children }: SmartCollapsibleProps) {
+export default function Collapsible({ title, children, containerStyle,headerStyle,bodyStyle }: SmartCollapsibleProps) {
   const open = useSharedValue(0);
 
   const [height, setHeight] = useState(0);
@@ -42,16 +45,16 @@ export default function Collapsible({ title, children }: SmartCollapsibleProps) 
   }));
 
   return (
-    <View style={styles.container}>
-      <TouchableOpacity style={styles.header} activeOpacity={0.7} onPress={toggle}>
+    <View style={[styles.container, containerStyle]}>
+      <TouchableOpacity style={[styles.header, headerStyle]} activeOpacity={0.7} onPress={toggle}>
         <AppText text={title} type="header" size="large" />
         <Animated.View style={iconStyle}>
-          <Image source={imagePath.infoIcon} style={styles.icon} />
+          <Image source={imagePath.downArrow} style={styles.icon} />
         </Animated.View>
       </TouchableOpacity>
 
       {/* Visible animated content */}
-      <Animated.View style={[styles.contentWrapper, animatedStyle]}>
+      <Animated.View style={[styles.contentWrapper,bodyStyle, animatedStyle]}>
         <View style={styles.innerContent}>
           {children}
         </View>
@@ -98,7 +101,7 @@ const styles = StyleSheet.create(({ colors }) => ({
   
     contentWrapper: {
       overflow: 'hidden',
-      backgroundColor: 'grey',
+      backgroundColor:colors.grey25
     },
   
     innerContent: {

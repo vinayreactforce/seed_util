@@ -75,7 +75,7 @@ function AppContent() {
         isVisible={isSelected}
       />
       <SmartCollapsible title="Collapsible">
-      <View style={{ height: 100, backgroundColor: 'pink' ,justifyContent:'flex-end'}} >
+      <View style={{ height: 100, justifyContent:'flex-end'}} >
         <AppText text="Hello" type="body" />
         <AppText text="Hello" type="body" />
         <AppText text="Hello" type="body" />
