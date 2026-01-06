@@ -12,10 +12,18 @@ import {
   SafeAreaProvider,
   useSafeAreaInsets,
 } from 'react-native-safe-area-context';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { getMyKey } from './src/utils/keyUtils';
 import { DB_KEYS } from './src/constants/dbConstants';
 import Button from './src/ui/Button';
+import AppText from './src/ui/AppText';
+import CheckBox from './src/ui/Checkbox';
+import Radio from './src/ui/Radio';
+import Switch from './src/ui/Switch';
+import ConfirmationDialog from './src/ui/ConfirmationDialog';
+import CloseBtn from './src/ui/CloseBtn';
+import ChipMessage from './src/ui/ChipMessage';
+import SmartCollapsible from './src/ui/Collapsible';
 
 function App() {
   const isDarkMode = useColorScheme() === 'dark';
@@ -47,11 +55,40 @@ function App() {
 
 function AppContent() {
   const safeAreaInsets = useSafeAreaInsets();
+  const [isSelected, setIsSelected] = useState(false);
+
+  const handleCheckboxPress = (value: boolean, data: any) => {
+    setIsSelected(value);
+  };
 
   return (
     <View style={styles.container}>
       <View style={{ marginTop: 100 }} />
-      <Button title="Click me" onPress={() => alert('Button pressed')} />
+      <Button title="Click me" type="outline" onPress={() => setIsSelected(true)} />
+        <CloseBtn  circular variant="primary" onPress={() => setIsSelected(false)} />
+          <ChipMessage type="info" text="Success is the best revenge for being wronged by someone very long text here"  onClose={() => setIsSelected(false)} />
+      <ConfirmationDialog
+        
+        message="Are you sure you want to confirm?"
+        onConfirm={() => alert('Confirmed')}
+        onCancel={() => setIsSelected(false)}
+        isVisible={isSelected}
+      />
+      <SmartCollapsible title="Collapsible">
+      <View style={{ height: 100, backgroundColor: 'pink' ,justifyContent:'flex-end'}} >
+        <AppText text="Hello" type="body" />
+        <AppText text="Hello" type="body" />
+        <AppText text="Hello" type="body" />
+      </View>
+      </SmartCollapsible>
+      <AppText text="Hello" type="body" />
+      {/* <CheckBox isSelected={isSelected} onPress={handleCheckboxPress} label="Checkbox" /> */}
+      {/* <Radio isSelected={isSelected} onPress={handleCheckboxPress} label="Radio" /> */}
+      <Switch
+        value={isSelected}
+        data={{ label: 'Switch' }}
+        onValueChange={handleCheckboxPress}
+      />
       <NewAppScreen
         templateFileName="App.tsx"
         safeAreaInsets={safeAreaInsets}
