@@ -1,5 +1,5 @@
 import React from 'react';
-import { Pressable, Text } from 'react-native';
+import { Pressable, StyleProp, Text, ViewStyle } from 'react-native';
 import { StyleSheet } from 'react-native-unistyles';
 import { moderateScale } from '../theme/responsiveSize';
 
@@ -11,6 +11,7 @@ interface Props {
   size?: 'small' | 'medium' | 'large' | 'xLarge';
   circular?: boolean;
   isDisabled?: boolean;
+  btnContainerStyle?: StyleProp<ViewStyle>;
 }
 
 const Button = ({
@@ -21,6 +22,7 @@ const Button = ({
   size,
   circular = false,
   isDisabled,
+  btnContainerStyle,
 }: Props) => {
   styles.useVariants({ variant, type, size, circular });
   return (
@@ -29,6 +31,7 @@ const Button = ({
       disabled={isDisabled}
       style={({ pressed }) => [
         styles.container,
+        btnContainerStyle,
         isDisabled && styles.disabled,
         pressed && styles.pressed,
       ]}
