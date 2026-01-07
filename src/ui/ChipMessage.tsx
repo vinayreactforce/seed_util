@@ -27,7 +27,7 @@ export default function ChipMessage({
         text={text}
         type="label"
         size="medium"
-        textStyle={styles.label}
+        style={styles.label}
       />
       </View>
 

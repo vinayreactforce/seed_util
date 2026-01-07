@@ -36,7 +36,7 @@ export default function Radio({
       </View>
       {!!label && (
         <AppText
-          textStyle={styles.label}
+          style={styles.label}
           text={label}
           type="label"
           size="medium"

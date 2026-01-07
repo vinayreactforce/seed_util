@@ -36,7 +36,7 @@ export default function CheckBox({
           </Animated.Text>
         )}
       </Animated.View>
-      {!!label && <AppText textStyle={styles.label} text={label} type="label" size="medium" />}
+      {!!label && <AppText style={styles.label} text={label} type="label" size="medium" />}
     </Pressable>
   );
 }

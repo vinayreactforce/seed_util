@@ -78,8 +78,8 @@ export default function ConfirmationDialog({
             </View>
           </View>
 
-          <AppText type='header' size="xlarge" textStyle={styles.headerText} text={title} />  
-          <AppText type='label' textStyle={styles.bodyText} text={message} />  
+          <AppText type='header' size="xlarge" style={styles.headerText} text={title} />  
+          <AppText type='label' style={styles.bodyText} text={message} />  
 
           {/* Horizontal Buttons */}
           <View style={styles.buttonRow}>

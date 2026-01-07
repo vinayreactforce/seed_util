@@ -71,7 +71,7 @@ interface AppInputProps extends TextInputProps {
 
       {error && (
         <View style={styles.errorMargin}>
-          <AppText text={error} textStyle={styles.errorText} />
+          <AppText text={error} style={styles.errorText} />
         </View>
       )}
     </View>

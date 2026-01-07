@@ -8,11 +8,11 @@ interface Props {
   type?: 'header' | 'label' | 'body' | 'placeholder';
   size?: 'xsmall' | 'small' | 'medium' | 'large' | 'xlarge' | 'xxlarge';
   color?: 'primary' | 'error' | 'success' | 'brand';
-  textStyle?: TextStyle;
+  style?: TextStyle;
 }
-export default function AppText({ text, type = 'body',size,color,textStyle={} }: Props) {
+export default function AppText({ text, type = 'body',size,color,style={} }: Props) {
   styles.useVariants({ type, size, color });
-  return <Text style={[styles.textRoot, textStyle]}>{text}</Text>;
+  return <Text style={[styles.textRoot, style]}>{text}</Text>;
 }
 
 const styles = StyleSheet.create(
