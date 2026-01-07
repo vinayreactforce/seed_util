@@ -11,7 +11,7 @@ interface AppInputProps extends TextInputProps {
   isTextArea?: boolean;
   debounceTime?: number;
   field?: string;
-  onChangeText: (text: string, key?: string) => void;
+  onChangeText?: (text: string, key?: string) => void;
 }
 
  function AppInput({
@@ -36,6 +36,9 @@ interface AppInputProps extends TextInputProps {
   }, []);
 
   const handleChange = (value: string) => {
+    if(!onChangeText){
+        return;
+    }
     // If no debounce is needed, act normally
     if (debounceTime === 0) {
       onChangeText(value, field);
@@ -54,7 +57,7 @@ interface AppInputProps extends TextInputProps {
     <View style={styles.container}>
       {label && (
         <View style={styles.labelMargin}>
-          <AppText text={label} type="header" size="small" />
+          <AppText text={label} type="header" style={styles.labelText} size="small" />
         </View>
       )}
 
@@ -88,7 +91,9 @@ const styles = StyleSheet.create(({ colors, textSizeVariants }) => ({
   labelMargin: {
     marginBottom: moderateScale(6),
   },
-
+  labelText: {
+    textTransform: 'capitalize',
+  },
   inputWrapper: {
     width: '100%',
     borderRadius: 12,
