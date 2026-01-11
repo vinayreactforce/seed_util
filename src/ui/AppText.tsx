@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, TextStyle } from 'react-native';
+import { Text, TextStyle,TextProps } from 'react-native';
 import { StyleSheet } from 'react-native-unistyles';
 import { moderateScale } from '../theme/responsiveSize';
 
@@ -10,9 +10,9 @@ interface Props {
   color?: 'primary' | 'error' | 'success' | 'brand';
   style?: TextStyle;
 }
-export default function AppText({ text, type = 'body',size,color,style={} }: Props) {
+export default function AppText({ text, type = 'body',size,color,style={}, ...props }: Props & TextProps) {
   styles.useVariants({ type, size, color });
-  return <Text style={[styles.textRoot, style]}>{text}</Text>;
+  return <Text {...props} style={[styles.textRoot, style]}>{text}</Text>;
 }
 
 const styles = StyleSheet.create(

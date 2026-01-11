@@ -1,33 +1,31 @@
 import React, { useRef, useEffect } from 'react';
-import { View, TextInput, TextInputProps } from 'react-native';
+import { View, TextInput } from 'react-native';
 import { StyleSheet } from 'react-native-unistyles';
 import AppText from './AppText';
 import { moderateScale } from '../theme/responsiveSize';
-import fontFamily from '../theme/fontFamily';
+import { AppInputProps } from '../types/formComponent';
 
-interface AppInputProps extends TextInputProps {
-  label?: string;
-  error?: string;
-  isTextArea?: boolean;
-  debounceTime?: number;
-  field?: string;
-  onChangeText?: (text: string, key?: string) => void;
-}
+// to add regular expression to the input
+// const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+// const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+// and pass it
+
 
  function AppInput({
   label,
-  error,
+  errorMessage,
   isTextArea = false,
   style,
   numberOfLines,
   field,
   debounceTime = 0, // 0 means no debounce
   onChangeText,
+  isCaptialized = false,
   ...props
 }: AppInputProps) {
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  styles.useVariants({ hasError: !!error, isTextArea });
+  styles.useVariants({ hasError: !!errorMessage, isTextArea, isCaptialized });
 
   useEffect(() => {
     return () => {
@@ -72,9 +70,9 @@ interface AppInputProps extends TextInputProps {
         />
       </View>
 
-      {error && (
+      {!!errorMessage && (
         <View style={styles.errorMargin}>
-          <AppText text={error} style={styles.errorText} />
+          <AppText text={errorMessage} style={styles.errorText} />
         </View>
       )}
     </View>
@@ -82,7 +80,7 @@ interface AppInputProps extends TextInputProps {
 }
 
 export default React.memo(AppInput);
-const styles = StyleSheet.create(({ colors, textSizeVariants }) => ({
+const styles = StyleSheet.create(({ colors, textSizeVariants,fontFamily }) => ({
   container: {
     width: '100%',
     marginVertical: moderateScale(8),
@@ -139,6 +137,11 @@ const styles = StyleSheet.create(({ colors, textSizeVariants }) => ({
         },
         false: {
           paddingVertical: 0,
+        },
+      },
+      isCaptialized: {
+        true: {
+          textTransform: 'uppercase',
         },
       },
     },

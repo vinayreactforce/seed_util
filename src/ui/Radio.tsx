@@ -50,7 +50,7 @@ const styles = StyleSheet.create(({ colors, spacing, textSizeVariants }) => ({
   container: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: spacing.sm,
+    // paddingBottom: spacing.sm,
   },
   radioOuter: {
     width: 24,
