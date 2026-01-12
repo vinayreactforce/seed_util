@@ -1,5 +1,6 @@
 import { Control, FieldValues, Path } from "react-hook-form";
 import { TextInputProps } from "react-native";
+import { DateMode } from '../constants/dateFormat';
 
 
 /**
@@ -34,7 +35,18 @@ export interface AppInputProps extends TextInputProps {
     onChangeText?: (text: string, key?: string) => void;
 }
 
-
+interface DateInputProps {
+    field: string;
+    value: string | null; 
+    onChange: (value: string, field: string) => void;
+    mode?: DateMode;
+    label?: string;
+    errorMessage?: string;
+    placeholder?: string;
+    minimumDate?: Date;
+    maximumDate?: Date;
+  }
+  
 //=====================MASTER BASE FORM PROPS =====================
 
 // 1. The Master Base
@@ -72,6 +84,10 @@ export interface FormDropdownProps<T extends FieldValues> extends Omit<AppDropdo
     name: Path<T>;
     control: Control<T>;
     rules?: object;
+}
+
+
+export interface FormDateTimePickerProps<T extends FieldValues> extends BaseFormProps<T>, Omit<DateInputProps, 'value' | 'onChange' | 'errorMessage'> {
 }
 
 

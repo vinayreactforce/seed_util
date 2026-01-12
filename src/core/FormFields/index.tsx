@@ -1,15 +1,24 @@
 import React from 'react';
 import { View } from 'react-native';
 import { StyleSheet } from 'react-native-unistyles';
-import { Controller, FieldValues,UseControllerProps } from 'react-hook-form';
+import { Controller, FieldValues, UseControllerProps } from 'react-hook-form';
 import {
   SelectionProps,
   FormInputProps,
   FormDropdownProps,
   OptionValue,
+  FormDateTimePickerProps,
 } from '../../types/formComponent';
 // Import your existing UI components
-import { Radio, CheckBox, AppText, AppInput, AppDropdown,RangeSlider } from '../../ui';
+import {
+  Radio,
+  CheckBox,
+  AppText,
+  AppInput,
+  AppDropdown,
+  RangeSlider,
+  DateTimePicker,
+} from '../../ui';
 import { moderateScale } from '../../theme/responsiveSize';
 
 /**
@@ -135,6 +144,9 @@ export function FormCheckboxGroup<T extends FieldValues>({
   );
 }
 
+/**
+ * 3. SMART INPUT GROUP (Single Line Text/Multi Line Text/ Text Area)
+ */
 export const FormInput = <T extends FieldValues>({
   name,
   control,
@@ -145,7 +157,7 @@ export const FormInput = <T extends FieldValues>({
     <Controller
       name={name}
       control={control}
-    //   rules={{ required: { value: true, message: 'This field is mandatory' } }}
+      //   rules={{ required: { value: true, message: 'This field is mandatory' } }}
       // Fix the "never" error by ensuring the default is a combined array type
       render={({
         field: { onChange, value = '' as string | number },
@@ -163,86 +175,127 @@ export const FormInput = <T extends FieldValues>({
   );
 };
 
-export const FormDropdown= <T extends FieldValues>({
-    name,
-    control,
-    label,
-    ...rest
-  }: FormDropdownProps<T>) => {
-    return (
-      <Controller
-        name={name}
-        control={control}
-        // rules={{ required: { value: true, message: 'This field is mandatory' } }}
-        // Fix the "never" error by ensuring the default is a combined array type
-        render={({
-          field: { onChange, value = '' as string | number },
-          fieldState: { error },
-        }) => (
-          <AppDropdown
-            {...rest}
-            label={label || name}
-            value={value as string | number | (string | number)[]}
-            onSelect={onChange}
-            errorMessage={error?.message}
-          />
-        )}
-      />
-    );
-  };
+/**
+ * 4. SMART DROPDOWN GROUP (Single Select/Multi Select/Searchable)
+ */
+export const FormDropdown = <T extends FieldValues>({
+  name,
+  control,
+  label,
+  ...rest
+}: FormDropdownProps<T>) => {
+  return (
+    <Controller
+      name={name}
+      control={control}
+      // rules={{ required: { value: true, message: 'This field is mandatory' } }}
+      // Fix the "never" error by ensuring the default is a combined array type
+      render={({
+        field: { onChange, value = '' as string | number },
+        fieldState: { error },
+      }) => (
+        <AppDropdown
+          {...rest}
+          label={label || name}
+          value={value as string | number | (string | number)[]}
+          onSelect={onChange}
+          errorMessage={error?.message}
+        />
+      )}
+    />
+  );
+};
 
+/**
+ * 5. SMART SLIDER GROUP (Single Value/Range Value)
+ */
+interface FormSliderProps<T extends FieldValues> extends UseControllerProps<T> {
+  label?: string;
+  minimumValue: number;
+  maximumValue: number;
+  mode?: 'single' | 'range';
+  allowDecimals?: boolean;
+  style?: any;
+  showValues?: boolean;
+}
 
-  interface FormSliderProps<T extends FieldValues> extends UseControllerProps<T> {
-    label?: string;
-    minimumValue: number;
-    maximumValue: number;
-    mode?: 'single' | 'range';
-    allowDecimals?: boolean;
-    style?: any;
-    showValues?: boolean;
-  }
-  
-  export const FormSlider = <T extends FieldValues>({
-    name,
-    control,
-    label,
-    showValues=true,
-    ...rest
-  }: FormSliderProps<T>) => {
-    return (
-      <Controller
-        name={name}
-        control={control}
-        render={({
-          field: { onChange, value },
-          fieldState: { error },
-        }) => (
-          <View style={styles.container}>
-            {!!label && (
-              <AppText text={label} type="header" />
-            )}
-            {showValues && (
-              <AppText text={value?.toString()||""} style={{marginTop: 10 }} type="label" />
-            )}
-            <RangeSlider
-              {...rest}
-              // Ensure we pass the value from React Hook Form
-              // Range mode expects [number, number], Single expects [number]
-              initialValues={Array.isArray(value) ? value : [value || 0]}
-              onChange={(vals) => {
-                  // If single mode, just pass the number, else pass the array
-                  onChange(rest.mode === 'single' ? vals[0] : vals);
-              }}
+export const FormSlider = <T extends FieldValues>({
+  name,
+  control,
+  label,
+  showValues = true,
+  ...rest
+}: FormSliderProps<T>) => {
+  return (
+    <Controller
+      name={name}
+      control={control}
+      render={({ field: { onChange, value }, fieldState: { error } }) => (
+        <View style={styles.container}>
+          {!!label && <AppText text={label} type="header" />}
+          {showValues && (
+            <AppText
+              text={value?.toString() || ''}
+              style={{ marginTop: 10 }}
+              type="label"
             />
-  
-            {error && (
-              <AppText text={error.message||""} color="error" style={{marginTop: 4 }} />)}
-             
-          </View>
-        )}
-      />
-    );
-  };
+          )}
+          <RangeSlider
+            {...rest}
+            // Ensure we pass the value from React Hook Form
+            // Range mode expects [number, number], Single expects [number]
+            initialValues={Array.isArray(value) ? value : [value || 0]}
+            onChange={vals => {
+              // If single mode, just pass the number, else pass the array
+              onChange(rest.mode === 'single' ? vals[0] : vals);
+            }}
+          />
+
+          {error && (
+            <AppText
+              text={error.message || ''}
+              color="error"
+              style={{ marginTop: 4 }}
+            />
+          )}
+        </View>
+      )}
+    />
+  );
+};
+
+/**
+ * 6. SMART DATE TIME PICKER GROUP (Date/Time/DateTime)
+ */
+export const FormDateTimePicker = <T extends FieldValues>({
+  name,
+  control,
+  label,
+  ...rest
+}: FormDateTimePickerProps<T>) => {
+  return (
+    <Controller
+      name={name}
+      control={control}
+      render={({
+        // 1. Default value to null instead of an empty string
+        field: { onChange, value = null },
+        fieldState: { error },
+      }) => (
+        <DateTimePicker
+          {...rest}
+          // 2. Fallback label logic
+          label={label || name}
+          // 3. Ensure value is strictly string or null
+          value={value as string | null}
+          // 4. Match the prop name used in your base component
+          onChange={onChange}
+          errorMessage={error?.message}
+        />
+      )}
+    />
+  );
+};
 
 /**
  * STYLES

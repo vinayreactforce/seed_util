@@ -1,146 +1,122 @@
-import React, { useState, memo } from 'react';
-import { TouchableOpacity, Text, View } from 'react-native';
+import React, { useState, memo, useMemo } from 'react';
+import { TouchableOpacity, View, Image } from 'react-native';
 import { StyleSheet } from 'react-native-unistyles';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
+import { format } from 'date-fns';
 import AppText from './AppText';
+import { normalizeToDate, formatForDisplay } from '../utils/dateUtil';
+import { DateMode } from '../constants/dateFormat';
+import imagePath from '../constants/imagePath';
 
 interface DateInputProps {
-  field: string; // Key for the form state (e.g., 'dateOfBirth')
-  value: Date | null; // Support null for unselected states
-  onChange: (date: Date, field: string) => void;
-  mode?: 'date' | 'time' | 'datetime';
+  field: string;
+  value: string | null; 
+  onChange: (value: string, field: string) => void;
+  mode?: DateMode;
   label?: string;
-  error?: string;
+  errorMessage?: string;
   placeholder?: string;
   minimumDate?: Date;
   maximumDate?: Date;
 }
 
-/**
- * AppDateInput: Enforced standard for all date/time picking across the app.
- * Optimized for React 19 concurrent rendering and RN 0.83 New Architecture.
- */
-export const AppDateInput = memo(
-  ({
-    field,
-    value,
-    onChange,
-    mode = 'date',
-    label,
-    error,
-    placeholder = 'Select',
-    minimumDate,
-    maximumDate,
-  }: DateInputProps) => {
-    const [isOpen, setIsOpen] = useState(false);
+const DateTimePicker = memo(({
+  field,
+  value,
+  onChange,
+  mode = 'date',
+  label,
+  errorMessage,
+  placeholder = 'Select',
+  minimumDate,
+  maximumDate,
+}: DateInputProps) => {
+  const [isOpen, setIsOpen] = useState(false);
 
-    // Apply variants based on the existence of an error or a valid value
+  const dateValue = useMemo(() => normalizeToDate(value), [value]);
 
-    styles.useVariants({ hasError: !!error, hasValue: !!value });
+  styles.useVariants({
+    hasError: !!errorMessage,
+    hasValue: !!dateValue,
+  });
 
-    const handleConfirm = (date: Date) => {
-      setIsOpen(false);
-      onChange(date, field);
-    };
+  const handleConfirm = (date: Date) => {
+    setIsOpen(false);
+    let output: string;
 
-    const formatDisplayValue = () => {
-      if (!value || !(value instanceof Date)) return placeholder;
+    if (mode === 'date') {
+      output = format(date, 'yyyy-MM-dd'); // Neutral date for SQL/Salesforce
+    } else if (mode === 'time') {
+      output = format(date, 'HH:mm:ss');    // Neutral time
+    } else {
+      output = date.toISOString();          // UTC Datetime for Global Sync
+    }
 
-      if (mode === 'date') return value.toLocaleDateString();
-      if (mode === 'time') {
-        return value.toLocaleTimeString([], {
-          hour: '2-digit',
-          minute: '2-digit',
-        });
-      }
-      return value.toLocaleString();
-    };
+    onChange(output, field);
+  };
 
-    return (
-      <View style={styles.wrapper}>
-        {label && <Text style={styles.label}>{label}</Text>}
+  return (
+    <View style={styles.wrapper}>
+      {label && <AppText style={styles.label} text={label} />}
 
-        <TouchableOpacity
-          style={styles.inputContainer}
-          onPress={() => setIsOpen(true)}
-          activeOpacity={0.7}
-        >
-          <AppText style={styles.inputText} text={formatDisplayValue()} />
-        </TouchableOpacity>
-
-        {!!error && <AppText style={styles.errorText} text={error} />}
-        {isOpen && (
-          <DateTimePickerModal
-            isVisible={isOpen}
-            mode={mode}
-            // Safety: Ensures the picker always has a valid Date object to start with
-            date={value instanceof Date ? value : new Date()}
-            minimumDate={minimumDate}
-            maximumDate={maximumDate}
-            onConfirm={handleConfirm}
-            onCancel={() => setIsOpen(false)}
-            // display="default" allows the OS to choose the best native look (Calendar/Clock)
-            display="default"
+      <TouchableOpacity
+        style={styles.inputContainer}
+        onPress={() => setIsOpen(true)}
+        activeOpacity={0.7}
+      >
+        <View style={styles.innerContainer}>
+          <AppText 
+            style={styles.inputText} 
+            text={dateValue ? formatForDisplay(value, mode) : placeholder} 
           />
-        )}
-      </View>
-    );
-  },
-);
+          <Image 
+            source={imagePath[mode]} 
+            style={styles.icon} 
+            resizeMode="contain" 
+          />
+        </View>
+      </TouchableOpacity>
+
+      {!!errorMessage && <AppText style={styles.errorText} text={errorMessage} />}
+
+      <DateTimePickerModal
+        isVisible={isOpen}
+        mode={mode}
+        date={dateValue ?? new Date()}
+        minimumDate={minimumDate}
+        maximumDate={maximumDate}
+        onConfirm={handleConfirm}
+        onCancel={() => setIsOpen(false)}
+      />
+    </View>
+  );
+});
+export default DateTimePicker;
 
 const styles = StyleSheet.create(theme => ({
-  wrapper: {
-    marginBottom: 16,
-    width: '100%',
-  },
-  label: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: theme.colors.typography,
-    marginBottom: 8,
-  },
+  wrapper: { marginBottom: 16 },
+  label: { fontSize: 14, fontWeight: '600', color: theme.colors.typography, marginBottom: 8 },
   inputContainer: {
     height: 52,
     borderRadius: 12,
-    backgroundColor: theme.colors.inverse || '#F5F7FA',
-    justifyContent: 'center',
+    backgroundColor: theme.colors.inverse,
     paddingHorizontal: 16,
+    justifyContent: 'center',
     borderWidth: 1,
-    borderColor: 'transparent', // Default state
+    borderColor: 'transparent',
     variants: {
-      hasError: {
-        true: {
-          borderColor: theme.colors.error || '#FF3B30',
-          backgroundColor: theme.colors.error + '10' || '#FFF5F5', // Optional: light red tint
-        },
-      },
-      hasValue: {
-        true: {
-          // You can add styles for when a value is present (e.g., active border)
-        },
-      },
+      hasError: { true: { borderColor: theme.colors.error, backgroundColor: theme.colors.error + '10' } },
+      hasValue: { true: { borderColor: theme.colors.border } },
     },
   },
-  inputText: {
+  innerContainer: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  inputText: { 
     fontSize: 16,
-    color: theme.colors.labelText || '#8E8E93', // Default/Placeholder color
     variants: {
-      hasValue: {
-        true: {
-          color: theme.colors.typography || '#1C1C1E',
-        },
-      },
-      hasError: {
-        true: {
-          color: theme.colors.error || '#FF3B30',
-        },
-      },
-    },
+      hasValue: { true: { color: theme.colors.typography }, false: { color: theme.colors.labelText } },
+      hasError: { true: { color: theme.colors.error } }
+    }
   },
-  errorText: {
-    fontSize: 12,
-    color: theme.colors.error || '#FF3B30',
-    marginTop: 4,
-    fontWeight: '500',
-  },
+  icon: { width: 20, height: 20, tintColor: theme.colors.typography },
+  errorText: { fontSize: 12, color: theme.colors.error, marginTop: 4 },
 }));

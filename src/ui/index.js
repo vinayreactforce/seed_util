@@ -6,3 +6,4 @@ export { default as Switch } from './Switch';
 export { default as AppInput } from './AppInput';
 export { default as AppDropdown } from './AppDropdown';
 export {default as RangeSlider} from './RangeSlider'
+export {default as DateTimePicker} from './DateTimePicker'
