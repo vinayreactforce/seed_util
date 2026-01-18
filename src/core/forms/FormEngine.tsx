@@ -8,7 +8,8 @@ import {
   FormRadioGroup, 
   FormCheckboxGroup, 
   FormSlider, 
-  FormDateTimePicker 
+  FormDateTimePicker,
+  FormDependentDropdown
 } from './FormFields'; 
 import { ConditionalWrapper } from './components/ConditionalWrapper';
 
@@ -19,11 +20,13 @@ const COMPONENT_REGISTRY: Record<string, any> = {
   checkbox: FormCheckboxGroup,
   slider: FormSlider,
   datetime: FormDateTimePicker,
+  dependentDropdown: FormDependentDropdown,
 };
 
 export const FormEngine = <T extends FieldValues>({ 
     config, 
-    control 
+    control,
+    setValue 
   }: FormEngineProps<T>) => {
     return (
       <>
@@ -38,6 +41,8 @@ export const FormEngine = <T extends FieldValues>({
                 <Component
                   name={field.name}
                   control={control}
+                  setValue={setValue}
+                  dependsOn={field.dependsOn}
                   label={field.label}
                   options={field.options}
                   isMulti={field.isMulti}

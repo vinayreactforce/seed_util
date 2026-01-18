@@ -1,7 +1,8 @@
-import React from 'react';
+import React, {  useEffect, useMemo, useRef } from 'react';
 import { View } from 'react-native';
+
 import { StyleSheet } from 'react-native-unistyles';
-import { Controller, FieldValues, UseControllerProps } from 'react-hook-form';
+import { Controller, FieldValues, UseControllerProps, useWatch, Path, UseFormSetValue} from 'react-hook-form';
 import {
   SelectionProps,
   FormInputProps,
@@ -205,6 +206,119 @@ export const FormDropdown = <T extends FieldValues>({
     />
   );
 };
+
+
+
+
+
+
+export const FormDependentDropdown = <T extends FieldValues>({
+  name,
+  control,
+  dependsOn,
+  options: staticOptions = [],
+  setValue,
+  ...rest
+}: FormDropdownProps<T> & { setValue: UseFormSetValue<T> }) => {
+
+  const parentValue = useWatch({ control, name: dependsOn as Path<T> });
+  const childValue = useWatch({ control, name: name as Path<T> });
+
+  // 1. Optimization: Index staticOptions into a Map for O(1) lookup
+  // This runs only when the master options list changes.
+  const optionsMap = useMemo(() => {
+    const map = new Map<string, typeof staticOptions>();
+    staticOptions.forEach(opt => {
+      const pId = String(opt.parentId);
+      if (!map.has(pId)) map.set(pId, []);
+      map.get(pId)?.push(opt);
+    });
+    return map;
+  }, [staticOptions]);
+
+  // 2. Robust normalization to handle strings, objects, or arrays
+  const parentKey = useMemo(() => {
+    if (!parentValue) return undefined;
+
+    if (Array.isArray(parentValue)) {
+      const val = parentValue[0]?.value;
+      return val !== undefined && val !== null ? String(val) : undefined;
+    }
+
+    if (typeof parentValue === 'object') {
+      const obj = parentValue as Record<string, any>;
+      const val = obj.value ?? obj[dependsOn as string];
+      return val !== undefined && val !== null ? String(val) : undefined;
+    }
+
+    return String(parentValue);
+  }, [parentValue, dependsOn]);
+
+  // 3. Instant filtered options lookup
+  const filteredOptions = useMemo(() => {
+    if (!parentKey) return [];
+    return optionsMap.get(parentKey) ?? [];
+  }, [parentKey, optionsMap]);
+
+  // 4. Performance Guard
+  const lastParentKeyRef = useRef(parentKey);
+
+  useEffect(() => {
+    if (lastParentKeyRef.current === parentKey) return;
+    lastParentKeyRef.current = parentKey;
+
+    const isChildEmpty =
+      !childValue ||
+      (Array.isArray(childValue) && childValue.length === 0);
+
+    const resetChild = () => {
+      setValue(
+        name as Path<T>,
+        (rest.isMulti ? [] : undefined) as any,
+        {
+          shouldValidate: false, // Prevents persistent error UI
+          shouldDirty: true,     // Correctly marks form as modified
+          shouldTouch: false,    // Hides error until next user interaction
+        }
+      );
+    };
+
+    if (!parentKey) {
+      if (!isChildEmpty) resetChild();
+      return;
+    }
+
+    if (!isChildEmpty) {
+      const childPrimitive =
+        typeof childValue === 'object'
+          ? childValue.value
+          : childValue;
+
+      // Note: we still use .some() on the filtered subset, 
+      // which is now a much smaller array.
+      const isValid = filteredOptions.some(
+        opt => String(opt.value) === String(childPrimitive)
+      );
+
+      if (!isValid) resetChild();
+    }
+  }, [parentKey, filteredOptions, childValue, name, setValue, rest.isMulti]);
+
+  return (
+    <FormDropdown
+      {...rest}
+      name={name}
+      control={control}
+      options={filteredOptions}
+      placeholder={
+        !parentKey
+          ? `Select ${ dependsOn ?? 'parent'} first`
+          : rest.placeholder
+      }
+    />
+  );
+};
+
 
 /**
  * 5. SMART SLIDER GROUP (Single Value/Range Value)

@@ -33,6 +33,7 @@ export type IMasterRegistration = typeof defaultValues;
       <FormEngine 
         config={masterConfig} 
         control={control} 
+        setValue={formMethods.setValue}
       />
 
     

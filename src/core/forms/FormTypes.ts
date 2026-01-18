@@ -1,4 +1,4 @@
-import { Control, FieldValues, Path } from "react-hook-form";
+import { Control, FieldValues, Path,UseFormSetValue } from "react-hook-form";
 import { Bricks } from "../validation/bricks"; // Import your actual Bricks object
 import { VisibilityConfig } from "./utils/visibility";
 
@@ -6,7 +6,7 @@ import { VisibilityConfig } from "./utils/visibility";
 // This extracts all the keys from your Bricks object ('Email' | 'Mobile' | 'Select' etc.)
 export type ValidationBrickType = keyof typeof Bricks;
 
-export type UIType = 'text' | 'dropdown' | 'radio' | 'checkbox' | 'slider' | 'datetime';
+export type UIType = 'text' | 'dropdown' | 'radio' | 'checkbox' | 'slider' | 'datetime' | 'dependentDropdown';
 
 export interface Option {
     label: string;
@@ -21,7 +21,7 @@ export interface FormFieldConfig<T extends FieldValues> {
   ui: UIType;
   type: ValidationBrickType; // Now perfectly synced with your Bricks file
   required?: boolean;
-  options?: {label:string,value:string}[];
+  options?: Option[];
   isMulti?: boolean;
   props?: {
     // mode?: 'numeric' | 'complex' | 'date' | 'time' | 'datetime'; // For Password brick
@@ -38,4 +38,5 @@ export interface FormFieldConfig<T extends FieldValues> {
 export interface FormEngineProps<T extends FieldValues> {
   config: FormFieldConfig<T>[];
   control: Control<T>;
+  setValue: UseFormSetValue<T>;
 }

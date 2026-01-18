@@ -63,6 +63,30 @@ export const masterConfig: FormFieldConfig<any>[] = [
       required: false ,
       options: genderOptions,
     },
+    { 
+        name: 'category', 
+        type: 'Select', 
+        ui: 'dropdown', 
+        required: true, 
+        label: 'Category', 
+        options: [
+          { label: 'Electronics', value: 'elec' },
+          { label: 'Furniture', value: 'furn' }
+        ]
+      },
+      { 
+        name: 'subCategory', 
+        type: 'Select', 
+        ui: 'dependentDropdown', 
+        label: 'Sub Category', 
+        required: true, 
+        dependsOn: 'category', // Links to the parent field name
+        options: [
+          { label: 'Laptops', value: 'lp', parentId: 'elec' },
+          { label: 'Phones', value: 'ph', parentId: 'elec' },
+          { label: 'Chairs', value: 'ch', parentId: 'furn' },
+        ],
+      },
     
   
     // 6. MULTI-SELECT (Dropdown or Checkbox Group)

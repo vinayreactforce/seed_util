@@ -9,6 +9,7 @@ import { DateMode } from '../constants/dateFormat';
 interface Option {
     label: string;
     value: string | number;
+    parentId?: string | number;
   }
   
 export type OptionValue = Option['value'];
@@ -84,6 +85,9 @@ export interface FormDropdownProps<T extends FieldValues> extends Omit<AppDropdo
     name: Path<T>;
     control: Control<T>;
     rules?: object;
+    dependsOn?: string; 
+    required?: boolean;
+    getOptions?: (parentValue: any) => Promise<Option[]> | Option[];
 }
 
 
