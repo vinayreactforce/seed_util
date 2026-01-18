@@ -7,6 +7,7 @@
 
 import { NewAppScreen } from '@react-native/new-app-screen';
 import { StatusBar, StyleSheet, useColorScheme, View } from 'react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { open } from '@op-engineering/op-sqlite';
 import {
   SafeAreaProvider,
@@ -24,6 +25,10 @@ import ConfirmationDialog from './src/ui/ConfirmationDialog';
 import CloseBtn from './src/ui/CloseBtn';
 import ChipMessage from './src/ui/ChipMessage';
 import SmartCollapsible from './src/ui/Collapsible';
+import AppInput from './src/ui/AppInput';
+import OTPInput from './src/ui/OtpInput';
+import TestForm from './src/components/TestForm';
+import MasterRegistrationScreen from './src/components/TestComp/TestMasterConfigScreen';
 
 function App() {
   const isDarkMode = useColorScheme() === 'dark';
@@ -61,12 +66,34 @@ function AppContent() {
     setIsSelected(value);
   };
 
+  return( <GestureHandlerRootView><MasterRegistrationScreen /></GestureHandlerRootView>)
   return (
+    <GestureHandlerRootView>
     <View style={styles.container}>
       <View style={{ marginTop: 100 }} />
       <Button title="Click me" type="outline" onPress={() => setIsSelected(true)} />
         <CloseBtn  circular variant="primary" onPress={() => setIsSelected(false)} />
-          <ChipMessage type="info" text="Success is the best revenge for being wronged by someone very long text here"  onClose={() => setIsSelected(false)} />
+          <Radio label="radio" field="radio1" data={{value:1}} isSelected={isSelected} onPress={(field, value) =>{
+            alert(field + ' ' + value);
+          }} />
+          <CheckBox label="Checkbox"  data={{value:1}} isSelected={isSelected} onPress={(field, value) =>{
+            setIsSelected(true)
+          }} />
+          <Radio label="radio2" isSelected={isSelected} onPress={() => setIsSelected(true)} />
+          <ChipMessage type="error" text="Success is the best revenge for being wronged by someone very long text here"  onClose={() => setIsSelected(false)} />
+            <AppInput
+              placeholder="Enter your input"
+              label='yahoo'
+              field='inputName'
+              debounceTime={500}
+              error='Error message'
+              value='ehell'
+              // style={{textTransform:'lowercase'}}
+              isCaptialized={true}
+            />
+            <OTPInput onCodeFilled={() => alert('Code filled')} />
+
+              
       <ConfirmationDialog
         
         message="Are you sure you want to confirm?"
@@ -94,6 +121,7 @@ function AppContent() {
         safeAreaInsets={safeAreaInsets}
       />
     </View>
+    </GestureHandlerRootView>
   );
 }
 
