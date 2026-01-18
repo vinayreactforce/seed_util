@@ -82,5 +82,6 @@ const styles = StyleSheet.create(({ colors, spacing }) => ({
   },
   label: {
     marginLeft: spacing.sm,
+    textTransform: 'capitalize',
   },
 }));

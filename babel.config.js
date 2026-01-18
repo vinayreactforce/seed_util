@@ -26,6 +26,8 @@ module.exports = function (api) {
         },
       ],
       ['react-native-worklets/plugin', workletsPluginOptions],// react-native-worklets/plugin has to be listed last.
+      ["@babel/plugin-transform-export-namespace-from"]
+
     ],
   };
 };

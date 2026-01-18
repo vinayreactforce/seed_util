@@ -50,7 +50,7 @@ const styles = StyleSheet.create(theme => ({
   container: {
     paddingHorizontal: 16,
     minHeight: moderateScale(40),
-    borderRadius: 4,
+    borderRadius: 10,
     
     justifyContent: 'center',
     borderWidth: 1,

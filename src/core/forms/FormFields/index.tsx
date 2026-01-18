@@ -8,7 +8,7 @@ import {
   FormDropdownProps,
   OptionValue,
   FormDateTimePickerProps,
-} from '../../types/formComponent';
+} from '../../../types/formComponent';
 // Import your existing UI components
 import {
   Radio,
@@ -18,8 +18,8 @@ import {
   AppDropdown,
   RangeSlider,
   DateTimePicker,
-} from '../../ui';
-import { moderateScale } from '../../theme/responsiveSize';
+} from '../../../ui';
+import { moderateScale } from '../../../theme/responsiveSize';
 
 /**
  * TYPES

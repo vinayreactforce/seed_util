@@ -79,5 +79,6 @@ const styles = StyleSheet.create(({ colors, spacing, textSizeVariants }) => ({
   label: {
     marginLeft: spacing.sm,
     fontSize: textSizeVariants.labelLarge,
+    textTransform: 'capitalize',
   },
 }));
