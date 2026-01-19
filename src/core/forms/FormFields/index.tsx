@@ -1,4 +1,4 @@
-import React, {  useEffect, useMemo, useRef } from 'react';
+import React, {  useEffect, useMemo, useRef,Fragment } from 'react';
 import { View } from 'react-native';
 
 import { StyleSheet } from 'react-native-unistyles';
@@ -9,7 +9,7 @@ import {
   FormDropdownProps,
   OptionValue,
   FormDateTimePickerProps,
-} from '../../../types/formComponent';
+} from '../../../types/formComponentTypes';
 // Import your existing UI components
 import {
   Radio,
@@ -21,6 +21,7 @@ import {
   DateTimePicker,
 } from '../../../ui';
 import { moderateScale } from '../../../theme/responsiveSize';
+import { getUnqiueId } from '../../../utils/helperFunctions';
 
 /**
  * TYPES
@@ -407,6 +408,25 @@ export const FormDateTimePicker = <T extends FieldValues>({
           errorMessage={error?.message}
         />
       )}
+    />
+  );
+};
+
+
+export const FormHidden = ({ name, control, setValue, value, autoGenerate }: any) => {
+  useEffect(() => {
+    if (value) {
+      setValue(name, value);
+    } else if (autoGenerate) {
+      setValue(name, getUnqiueId());
+    }
+  }, [name, value, autoGenerate, setValue]);
+
+  return (
+    <Controller
+      name={name}
+      control={control}
+      render={() => <Fragment key={name}/>} // It exists in the form tree but has no UI
     />
   );
 };

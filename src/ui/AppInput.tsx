@@ -3,7 +3,7 @@ import { View, TextInput } from 'react-native';
 import { StyleSheet } from 'react-native-unistyles';
 import AppText from './AppText';
 import { moderateScale } from '../theme/responsiveSize';
-import { AppInputProps } from '../types/formComponent';
+import { AppInputProps } from '../types/formComponentTypes';
 
 // to add regular expression to the input
 // const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;

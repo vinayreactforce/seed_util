@@ -8,7 +8,7 @@ import { StyleSheet } from 'react-native-unistyles';
 import AppText from './AppText';
 import { moderateScale } from '../theme/responsiveSize';
 import imagePath from '../constants/imagePath';
-import { AppDropdownProps } from '../types/formComponent';
+import { AppDropdownProps } from '../types/formComponentTypes';
 
 
 const AppDropdown = ({

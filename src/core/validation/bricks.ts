@@ -126,7 +126,42 @@ export const Bricks = {
        .min(min, { message: `${label} must be at least ${min}` }),
     optional: z.coerce.number().optional(),
   },
-
+  File: {
+    required: (label = 'File') =>
+      z.any().superRefine((val, ctx) => {
+        // TWEAK: Early exit if value is fundamentally missing
+        if (val === null || val === undefined || val === '') {
+          ctx.addIssue({
+            code: 'custom',
+            message: `${label} is required`,
+          });
+          return; // Stop further regex checks
+        }
+  
+        const isFileObject =
+          typeof val === 'object' &&
+          typeof (val as any).uri === 'string' &&
+          (val as any).uri.length > 0;
+  
+        const isUrl =
+          typeof val === 'string' &&
+          /^https?:\/\//.test(val);
+  
+        const isBase64 =
+          typeof val === 'string' &&
+          /^data:image\/[a-zA-Z]+;base64,/.test(val);
+  
+        if (!isFileObject && !isUrl && !isBase64) {
+          ctx.addIssue({
+            code: 'custom',
+            message: `Please upload a valid ${label.toLowerCase()}`,
+          });
+        }
+      }),
+  
+    optional: z.any().optional(),
+  },
+  
   // CHECKBOX (For Terms & Conditions)
   Agreed: (message: string) => 
     z.boolean().refine(val => val === true, { message }),

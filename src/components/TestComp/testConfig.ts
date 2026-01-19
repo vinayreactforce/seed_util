@@ -52,7 +52,7 @@ export const masterConfig: FormFieldConfig<any>[] = [
       type: 'Email', 
       ui: 'text', 
       label: 'Email Address', 
-      required: false 
+      required: true 
     },
   
     { 
