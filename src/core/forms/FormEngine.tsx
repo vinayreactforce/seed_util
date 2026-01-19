@@ -9,7 +9,8 @@ import {
   FormCheckboxGroup, 
   FormSlider, 
   FormDateTimePicker,
-  FormDependentDropdown
+  FormDependentDropdown,
+  FormFilePicker
 } from './FormFields'; 
 import { ConditionalWrapper } from './components/ConditionalWrapper';
 
@@ -21,6 +22,7 @@ const COMPONENT_REGISTRY: Record<string, any> = {
   slider: FormSlider,
   datetime: FormDateTimePicker,
   dependentDropdown: FormDependentDropdown,
+  file: FormFilePicker,
 };
 
 export const FormEngine = <T extends FieldValues>({ 

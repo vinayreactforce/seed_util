@@ -128,38 +128,32 @@ export const Bricks = {
   },
   File: {
     required: (label = 'File') =>
-      z.any().superRefine((val, ctx) => {
-        // TWEAK: Early exit if value is fundamentally missing
-        if (val === null || val === undefined || val === '') {
-          ctx.addIssue({
-            code: 'custom',
-            message: `${label} is required`,
-          });
-          return; // Stop further regex checks
-        }
+      z.array(z.any()).nonempty(`${label} is required`).superRefine((val, ctx) => {
+        // Loop through the array of files (even if it's just 1)
+        val.forEach((file, index) => {
+          const isFileObject =
+            file &&
+            typeof file === 'object' &&
+            typeof file.uri === 'string' &&
+            file.uri.length > 0;
   
-        const isFileObject =
-          typeof val === 'object' &&
-          typeof (val as any).uri === 'string' &&
-          (val as any).uri.length > 0;
+          const isUrl =
+            typeof file === 'string' && /^https?:\/\//.test(file);
   
-        const isUrl =
-          typeof val === 'string' &&
-          /^https?:\/\//.test(val);
+          const isBase64 =
+            typeof file === 'string' && /^data:image\/[a-zA-Z]+;base64,/.test(file);
   
-        const isBase64 =
-          typeof val === 'string' &&
-          /^data:image\/[a-zA-Z]+;base64,/.test(val);
-  
-        if (!isFileObject && !isUrl && !isBase64) {
-          ctx.addIssue({
-            code: 'custom',
-            message: `Please upload a valid ${label.toLowerCase()}`,
-          });
-        }
+          if (!isFileObject && !isUrl && !isBase64) {
+            ctx.addIssue({
+              code: 'custom',
+              message: `File #${index + 1} is invalid`,
+              path: [index], // Highlights the specific file in the array
+            });
+          }
+        });
       }),
   
-    optional: z.any().optional(),
+    optional: z.array(z.any()).optional().default([]),
   },
   
   // CHECKBOX (For Terms & Conditions)

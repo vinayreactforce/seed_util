@@ -6,7 +6,7 @@ import { VisibilityConfig } from "./utils/visibility";
 // This extracts all the keys from your Bricks object ('Email' | 'Mobile' | 'Select' etc.)
 export type ValidationBrickType = keyof typeof Bricks;
 
-export type UIType = 'text' | 'dropdown' | 'radio' | 'checkbox' | 'slider' | 'datetime' | 'dependentDropdown';
+export type UIType = 'text' | 'dropdown' | 'radio' | 'checkbox' | 'slider' | 'datetime' | 'dependentDropdown' | 'file';
 
 export interface Option {
     label: string;

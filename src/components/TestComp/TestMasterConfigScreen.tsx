@@ -4,6 +4,7 @@ import { useAppForm } from '../../core/forms/useAppForm';
 import { FormEngine } from '../../core/forms/FormEngine';
 import { defaultValues, masterConfig } from './testConfig';
 import { Button } from '../../ui';
+import { FilePicker } from '../../ui/FilePicker';
 
   
 export type IMasterRegistration = typeof defaultValues;
@@ -28,6 +29,15 @@ export type IMasterRegistration = typeof defaultValues;
   };
   return (
     <View style={{flex:1,marginHorizontal:10}}> 
+    <View style={{marginTop:40}}>
+
+    <FilePicker
+      files={[]}
+      onFilesChange={()=>{}}
+      sources={["camera"]}
+      btnText="Take Photo"
+    />
+    </View>
     <ScrollView showsVerticalScrollIndicator={false}>
       {/* FormEngine loops through config and maps to components */}
       <FormEngine 

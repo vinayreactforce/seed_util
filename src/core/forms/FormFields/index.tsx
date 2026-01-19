@@ -21,7 +21,7 @@ import {
   DateTimePicker,
 } from '../../../ui';
 import { moderateScale } from '../../../theme/responsiveSize';
-import { getUnqiueId } from '../../../utils/helperFunctions';
+import { getUniqueId } from '../../../utils/helperFunctions';
 
 /**
  * TYPES
@@ -211,7 +211,9 @@ export const FormDropdown = <T extends FieldValues>({
 
 
 
-
+/**
+ * 5. SMART DEPENDENT DROPDOWN GROUP (Dependent Dropdown)
+ */
 
 export const FormDependentDropdown = <T extends FieldValues>({
   name,
@@ -322,7 +324,7 @@ export const FormDependentDropdown = <T extends FieldValues>({
 
 
 /**
- * 5. SMART SLIDER GROUP (Single Value/Range Value)
+ * 6. SMART SLIDER GROUP (Single Value/Range Value)
  */
 interface FormSliderProps<T extends FieldValues> extends UseControllerProps<T> {
   label?: string;
@@ -380,7 +382,7 @@ export const FormSlider = <T extends FieldValues>({
 };
 
 /**
- * 6. SMART DATE TIME PICKER GROUP (Date/Time/DateTime)
+ * 7. SMART DATE TIME PICKER GROUP (Date/Time/DateTime)
  */
 export const FormDateTimePicker = <T extends FieldValues>({
   name,
@@ -412,13 +414,15 @@ export const FormDateTimePicker = <T extends FieldValues>({
   );
 };
 
-
+/**
+ * 8. SMART HIDDEN GROUP (Hidden Field)
+ */
 export const FormHidden = ({ name, control, setValue, value, autoGenerate }: any) => {
   useEffect(() => {
     if (value) {
       setValue(name, value);
     } else if (autoGenerate) {
-      setValue(name, getUnqiueId());
+      setValue(name, getUniqueId());
     }
   }, [name, value, autoGenerate, setValue]);
 
@@ -430,6 +434,11 @@ export const FormHidden = ({ name, control, setValue, value, autoGenerate }: any
     />
   );
 };
+
+/**
+ * 9. SMART FILE PICKER GROUP (File/Image/Document)
+ */
+export { default as FormFilePicker } from './FormFilePicker';
 
 /**
  * STYLES

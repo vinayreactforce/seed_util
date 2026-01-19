@@ -87,7 +87,31 @@ export const masterConfig: FormFieldConfig<any>[] = [
           { label: 'Chairs', value: 'ch', parentId: 'furn' },
         ],
       },
-    
+      
+      {
+        name: "id_proof",
+        type: "File", // We use this in our 'switch' renderer
+        ui: 'file',
+        label: "ID Proof (Scan/Photo)",
+        props: {
+          maxFiles: 1,
+          sources: ['camera', 'gallery'],
+          btnText: "Take Photo",
+        },
+        required: true,
+      },
+      {
+        name: "expense_receipts",
+        type: "File", // We use this in our 'switch' renderer
+        ui: 'file',
+        label: "Expense Receipts",
+        props: {
+          maxFiles: 5,
+          sources: ['camera', 'gallery', 'document'],
+          btnText: "+ Add Receipt",
+        },
+        required: true,
+      },
   
     // 6. MULTI-SELECT (Dropdown or Checkbox Group)
     { 

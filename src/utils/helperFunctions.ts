@@ -7,6 +7,6 @@ export const getLineHeight = (fontSize: number): number => {
   };
 
 
-  export const getUnqiueId = (): string => {
+  export const getUniqueId = (): string => {
     return uuidv4();
   };

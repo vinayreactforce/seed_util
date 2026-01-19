@@ -1,29 +1,45 @@
-import { Pressable, Image, StyleProp, ImageStyle } from 'react-native';
-
 import React from 'react';
-import imagePath from '../constants/imagePath';
+import { 
+  Pressable, 
+  Image, 
+  StyleProp, 
+  ImageStyle, 
+  ViewStyle,
+  // Ensure Pressable is imported to avoid red screen
+} from 'react-native';
 import { StyleSheet } from 'react-native-unistyles';
+import imagePath from '../constants/imagePath'; // Adjust path as needed
 
 interface Props {
   onPress: () => void;
-  variant?: 'primary' | 'grey';
+  variant?: 'primary' | 'grey' | 'danger';
   circular?: boolean;
+  size?: 'small' | 'medium' | 'large';
   iconStyle?: StyleProp<ImageStyle>;
+  btnContainerStyle?: StyleProp<ViewStyle>;
+  inverseTint?: boolean;
 }
 
 export default function CloseBtn({
   onPress,
   variant = 'grey',
   circular = false,
+  size = 'medium',
   iconStyle,
+  btnContainerStyle,
+  inverseTint = false,
 }: Props) {
-  // Pass the props into useStyles to trigger variants
-  styles.useVariants({ variant, circular });
+  // Trigger variants in Unistyles
+  styles.useVariants({ variant, circular, size, inverseTint });
 
   return (
     <Pressable
       hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-      style={({ pressed }) => [styles.container, pressed && styles.pressed]}
+      style={({ pressed }) => [
+        styles.container, 
+        btnContainerStyle, 
+        pressed && styles.pressed
+      ]}
       onPress={onPress}
     >
       <Image
@@ -37,40 +53,37 @@ export default function CloseBtn({
 
 const styles = StyleSheet.create(({ colors }) => ({
   container: {
-    width: 24,
-    height: 24,
     justifyContent: 'center',
     alignItems: 'center',
     variants: {
-      // 1. Handle Colors
+      size: {
+        small: { width: 24, height: 24},
+        medium: { width: 36, height: 36 },
+        large: { width: 48, height: 48 },
+      },
       variant: {
         primary: {
-          // We define the base "primary" style here
           backgroundColor: 'transparent',
         },
         grey: {
           backgroundColor: 'transparent',
         },
       },
-      // 2. Handle Shape
       circular: {
         true: {
-          borderRadius: 20,
-          height: 40,
-          width: 40,
+          borderRadius: 99,
         },
         false: {
           borderRadius: 0,
         },
       },
     },
-    // 3. Handle the "Intersection" (The Variants logic)
     compoundVariants: [
       {
         variant: 'primary',
         circular: true,
         styles: {
-          backgroundColor: colors.primaryBrand + '20', // Primary with 12% opacity
+          backgroundColor: colors.primaryBrand + '20', 
         },
       },
       {
@@ -80,12 +93,22 @@ const styles = StyleSheet.create(({ colors }) => ({
           backgroundColor: colors.grey50 || '#F2F2F7',
         },
       },
+      {
+        variant: 'danger',
+        circular: true,
+        styles: {
+          backgroundColor: colors.error5 || '#F2F2F7',
+        },
+      },
     ],
   },
   image: {
-    width: 16,
-    height: 16,
     variants: {
+      size: {
+        small: { width: 10, height: 10 },
+        medium: { width: 15, height: 15 },
+        large: { width: 21, height: 21 },
+      },
       variant: {
         primary: {
           tintColor: colors.primaryBrand,
@@ -93,10 +116,18 @@ const styles = StyleSheet.create(({ colors }) => ({
         grey: {
           tintColor: colors.grey450,
         },
+        danger: {
+          tintColor: colors.error,
+        },
+      },
+      inverseTint: {
+        true: {
+          tintColor: colors.inverse,
+        },
       },
     },
   },
   pressed: {
-    opacity: 0.8,
+    opacity: 0.7,
   },
 }));
