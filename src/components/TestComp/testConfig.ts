@@ -71,17 +71,31 @@ export const masterConfig: FormFieldConfig<any>[] = [
         label: 'Category', 
         options: [
           { label: 'Electronics', value: 'elec' },
-          { label: 'Furniture', value: 'furn' }
+          { label: 'Furniture', value: 'furn' },
+          
         ],
         props: {
          hasSearch: true,
         }
-      },
-      { 
+    },
+    { 
         name: 'subCategory', 
         type: 'Select', 
         ui: 'asyncDropdown', 
         label: 'Sub Category', 
+        required: true, 
+        dependsOn: 'category', // Links to the parent field name
+        options: [
+          { label: 'Laptops', value: 'lp', parentId: 'elec' },
+          { label: 'Phones', value: 'ph', parentId: 'elec' },
+          { label: 'Chairs', value: 'ch', parentId: 'furn' },
+        ],
+      },
+      { 
+        name: 'subCategory2', 
+        type: 'Select', 
+        ui: 'asyncDropdown', 
+        label: 'Sub Category 2', 
         required: true, 
         dependsOn: 'category', // Links to the parent field name
         options: [

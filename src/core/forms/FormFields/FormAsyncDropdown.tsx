@@ -6,23 +6,22 @@ import { AppDropdownProps } from '../../../types/formComponentTypes';
 
 // --- Enterprise Service Layer ---
 const ApiService = {
-  fetch: async (url: string, params: Record<string, any>) => {
-    // Note: GET requests should use query params, not a body
+  fetch: async (url: string, params: Record<string, any>, signal?: AbortSignal) => {
     const queryString = new URLSearchParams(params).toString();
     const response = await fetch(`${url}?${queryString}`, {
       method: 'GET',
+      signal
     });
     if (!response.ok) throw new Error('Network response was not ok');
     return response.json();
   }
 };
 
-// --- Types ---
 type DropdownOption = {
   label: string;
   value: string | number;
   parentId?: string | number;
-  [key: string]: any; // Support for additional API metadata
+  [key: string]: any; 
 };
 
 interface DependentDropdownProps<T extends FieldValues> extends Omit<AppDropdownProps, 'onSelect' | 'options'> {
@@ -52,12 +51,12 @@ const FormAsyncDropdown = <T extends FieldValues>({
   const [remoteOptions, setRemoteOptions] = useState<DropdownOption[]>([]);
   const [isFetching, setIsFetching] = useState(false);
   const requestIdRef = useRef(0);
+  const isMounted = useRef(false);
+  const hydrationStartedRef = useRef<any>(null); // Guard for React 18 double-mounts
 
-  // 1. Watch the parent value
-  const parentValue = useWatch({
-    control,
-    name: (dependsOn || '') as Path<T>,
-  });
+  // 1. Watch Parent & Current Value
+  const parentValue = useWatch({ control, name: (dependsOn || '') as Path<T> });
+  const currentValue = useWatch({ control, name });
 
   // 2. Normalize Parent Key
   const parentKey = useMemo(() => {
@@ -67,10 +66,9 @@ const FormAsyncDropdown = <T extends FieldValues>({
       : String(parentValue);
   }, [parentValue]);
 
-  // 3. Optimized Static Indexing (O(1) lookup)
+  // 3. Optimized Static Indexing
   const optionsMap = useMemo(() => {
     if (apiTarget || !staticOptions.length) return undefined;
-
     const map = new Map<string, DropdownOption[]>();
     staticOptions.forEach(opt => {
       const key = String(opt.parentId);
@@ -80,22 +78,17 @@ const FormAsyncDropdown = <T extends FieldValues>({
     return map;
   }, [staticOptions, apiTarget]);
 
-  // 4. Resolve Final Display Options (Polymorphic Logic)
+  // 4. Resolve Final Display Options
   const displayOptions = useMemo(() => {
-    // Mode A: Remote
     if (apiTarget) return remoteOptions;
-
-    // Mode B: Static Dependent
     if (dependsOn) {
       if (!parentKey || !optionsMap) return [];
       return optionsMap.get(parentKey) ?? [];
     }
-
-    // Mode C: Static Standalone
     return staticOptions;
   }, [apiTarget, remoteOptions, dependsOn, parentKey, optionsMap, staticOptions]);
 
-  // 5. Debounced Search w/ Normalization & Race Protection
+  // 5. Debounced Search
   const debouncedSearch = useMemo(() =>
     debounce(async (query: string, pKey?: string) => {
       if (dependsOn && !pKey && !query) {
@@ -109,52 +102,81 @@ const FormAsyncDropdown = <T extends FieldValues>({
           search: query,
           ...(pKey ? { [parentKeyName]: pKey } : {})
         });
-        
         const normalized = response.map((item: any) => ({
           ...item,
           label: String(item[labelKey]),
           value: item[valueKey],
         }));
-
         if (requestId === requestIdRef.current) setRemoteOptions(normalized);
-      } catch (error) {
-        console.error("Fetch Error:", error);
+      } catch (error:any) {
+        if (error.name !== 'AbortError') console.error("Fetch Error:", error);
       } finally {
         if (requestId === requestIdRef.current) setIsFetching(false);
       }
     }, 500),
   [apiTarget, dependsOn, labelKey, valueKey, parentKeyName]);
 
-  // 6. Handle Parent Changes & State Cleanup
+  // 6. Handle Parent Changes (Using your working logic)
   const lastParentKeyRef = useRef<string | undefined>(parentKey);
-
   useEffect(() => {
-    const isFirstRun = requestIdRef.current === 0;
     const hasParentChanged = lastParentKeyRef.current !== parentKey;
     lastParentKeyRef.current = parentKey;
 
+    if (!isMounted.current) {
+      isMounted.current = true;
+      if (apiTarget && (parentKey || !dependsOn)) debouncedSearch('', parentKey);
+      return; 
+    }
+
     if (!hasParentChanged) return;
 
-    // Auto-clear child selection if parent changes (skip on initial pre-fill)
-    if (dependsOn && !isFirstRun) {
-      setValue(name, (rest.isMulti ? [] : undefined) as any, { 
-        shouldDirty: true,
-        shouldValidate: false 
+    if (dependsOn) {
+      setValue(name, (rest.isMulti ? [] : undefined) as any, {
+        shouldValidate: false, 
+        shouldDirty: true,     
+        shouldTouch: false,    
       });
     }
 
-    // Trigger initial fetch if in Remote Mode
     if (apiTarget && (parentKey || !dependsOn)) {
       debouncedSearch('', parentKey);
     }
   }, [parentKey, name, setValue, dependsOn, apiTarget, debouncedSearch, rest.isMulti]);
 
-  // 7. Component Lifecycle Cleanup
+  // 7. Hydration Layer: Resolves IDs to Labels in Edit Mode
+  useEffect(() => {
+    const hasValue = currentValue !== undefined && currentValue !== null && currentValue !== '';
+    const isValueFound = displayOptions.some(opt => String(opt.value) === String(currentValue));
+
+    if (hasValue && !isValueFound && apiTarget && hydrationStartedRef.current !== currentValue) {
+      hydrationStartedRef.current = currentValue; // Prevents duplicate calls for same ID
+      
+      const hydrate = async () => {
+        try {
+          // Note: Backend should support fetching a specific record by its ID
+          const response = await ApiService.fetch(apiTarget, { id: currentValue, limit: 1 });
+          if (response && response.length > 0) {
+            const item = response[0];
+            const option = {
+              ...item,
+              label: String(item[labelKey]),
+              value: item[valueKey],
+            };
+            setRemoteOptions(prev => [option, ...prev]);
+          }
+        } catch (e) {
+          console.error("Hydration failed", e);
+          hydrationStartedRef.current = null;
+        }
+      };
+      hydrate();
+    }
+  }, [currentValue, apiTarget, displayOptions, labelKey, valueKey]);
+
+  // 8. Cleanup
   useEffect(() => {
     return () => debouncedSearch.cancel();
   }, [debouncedSearch]);
-
-  
 
   return (
     <FormDropdown
@@ -163,14 +185,7 @@ const FormAsyncDropdown = <T extends FieldValues>({
       control={control}
       options={displayOptions}
       isLoading={isFetching}
-      // UX: Only disable if it's dependent and no parent is selected
-    //   isDisabled={rest.isDisabled || (!!dependsOn && !parentKey)}
       onSearchChange={apiTarget ? (q) => debouncedSearch(q, parentKey) : undefined}
-    //   placeholder={
-    //     !!dependsOn && !parentKey 
-    //       ? `Select ${dependsOn.replace(/Id|id/, '')} first` 
-    //       : rest.placeholder
-    //   }
     />
   );
 };
