@@ -39,6 +39,8 @@ const genderOptions = [
     { label: '10 units', value: 10 }
   ]
 
+  // { name: 'countryId', ui: 'select', apiTarget: '/api/countries' },
+  // { name: 'cityId', ui: 'asyncDropdown', apiTarget: '/api/cities', dependsOn: 'countryId' }
   /*
 // This is the master config for the test form contains radio, dropdown, checkbox, text, password, number, slider,datetimepicker//
 //  date, time, datetime, mobile and text area //
