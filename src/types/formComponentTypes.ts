@@ -24,6 +24,8 @@ export interface AppDropdownProps {
     hasSearch?: boolean;
     onSelect: (value: any, field: string) => void;
     errorMessage?: string;
+    isLoading?: boolean;
+    onSearchChange?: (query: string) => void;
 }
   
 export interface AppInputProps extends TextInputProps {

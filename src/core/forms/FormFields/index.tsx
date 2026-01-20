@@ -439,6 +439,7 @@ export const FormHidden = ({ name, control, setValue, value, autoGenerate }: any
  * 9. SMART FILE PICKER GROUP (File/Image/Document)
  */
 export { default as FormFilePicker } from './FormFilePicker';
+export { default as FormAsyncDropdown } from './FormAsyncDropdown';
 
 /**
  * STYLES

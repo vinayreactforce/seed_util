@@ -1,5 +1,5 @@
 import React, { useState, memo, useMemo, useCallback } from 'react';
-import { View, TouchableOpacity, TextInput, Image } from 'react-native';
+import { View, TouchableOpacity, TextInput, Image, ActivityIndicator } from 'react-native';
 import Modal from 'react-native-modal';
 import Animated, { 
   
@@ -21,6 +21,8 @@ const AppDropdown = ({
   hasSearch = false,
   onSelect,
   errorMessage,
+  isLoading = false, // New: Props for async state
+  onSearchChange,
 }: AppDropdownProps) => {
   const [isVisible, setIsVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -43,12 +45,21 @@ const AppDropdown = ({
 
   // 3. Search Logic
   const filteredOptions = useMemo(() => {
-    if (!searchQuery) return options;
+    if (!searchQuery || !!onSearchChange) return options;
     const lowerQuery = searchQuery.toLowerCase();
     return options.filter(opt => opt.label.toLowerCase().includes(lowerQuery));
-  }, [options, searchQuery]);
+  }, [options, searchQuery, onSearchChange]);
 
-  // 4. Selection Handler
+  // 4. Search Change Handler
+  const handleSearchChange = useCallback((text: string) => {
+    setSearchQuery(text);
+    // Only fire parent event if it exists (no overhead for static lists)
+    if (onSearchChange) {
+      onSearchChange(text);
+    }
+  }, [onSearchChange]);
+
+  // 5. Selection Handler
   const handleToggle = useCallback((itemValue: string | number) => {
     if (isMulti) {
       const nextSet = new Set(selectedSet);
@@ -107,11 +118,13 @@ const AppDropdown = ({
                   placeholder="Search..."
                   style={styles.searchInput}
                   value={searchQuery}
-                  onChangeText={setSearchQuery}
+                  onChangeText={handleSearchChange}
                   placeholderTextColor={styles.placeholderText.color}
                   autoCorrect={false}
                 />
-                {searchQuery.length > 0 && (
+                {isLoading ? (
+                  <ActivityIndicator size="small" style={styles.loader} color={styles.radioDot.backgroundColor} />
+                ) :searchQuery.length > 0 && (
                   <TouchableOpacity onPress={() => setSearchQuery('')} style={styles.clearButton}>
                     <AppText text="✕" style={styles.clearText} />
                   </TouchableOpacity>
@@ -228,4 +241,5 @@ const styles = StyleSheet.create(({ colors }) => ({
   checkMark: { color: '#fff', fontSize: 10, fontWeight: 'bold' },
   doneButton: { margin: 20, backgroundColor: colors.primaryBrand, height: 52, borderRadius: 14, alignItems: 'center', justifyContent: 'center' },
   doneText: { color: '#fff', fontSize: 16, fontWeight: '700', textTransform: 'uppercase' },
+  loader: { marginRight: 12 },
 }));

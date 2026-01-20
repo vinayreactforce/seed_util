@@ -10,7 +10,8 @@ import {
   FormSlider, 
   FormDateTimePicker,
   FormDependentDropdown,
-  FormFilePicker
+  FormFilePicker,
+  FormAsyncDropdown
 } from './FormFields'; 
 import { ConditionalWrapper } from './components/ConditionalWrapper';
 
@@ -22,6 +23,7 @@ const COMPONENT_REGISTRY: Record<string, any> = {
   slider: FormSlider,
   datetime: FormDateTimePicker,
   dependentDropdown: FormDependentDropdown,
+  asyncDropdown: FormAsyncDropdown,
   file: FormFilePicker,
 };
 
