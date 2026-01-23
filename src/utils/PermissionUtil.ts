@@ -2,6 +2,7 @@ import { Platform, Alert } from 'react-native';
 import {
   check,
   request as requestPermission,
+  requestMultiple,
   PERMISSIONS,
   RESULTS,
   openSettings,
@@ -73,6 +74,25 @@ class PermissionService {
   }
 
   public async ensure(type: AppPermission): Promise<boolean> {
+    const isAndroid = Platform.OS === 'android';
+
+    // SPECIAL CASE: Location on Android 12+ (API 31+)
+    // We must request BOTH Fine and Coarse together.
+    if (isAndroid && type === 'location') {
+      const statuses = await requestMultiple([
+        PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
+        PERMISSIONS.ANDROID.ACCESS_COARSE_LOCATION,
+      ]);
+
+      const isGranted =
+        statuses[PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION] === RESULTS.GRANTED ||
+        statuses[PERMISSIONS.ANDROID.ACCESS_COARSE_LOCATION] === RESULTS.GRANTED;
+      
+      if (!isGranted && statuses[PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION] === RESULTS.BLOCKED) {
+        this.showSettingsAlert(type);
+      }
+      return isGranted;
+    }
     const permission = this.getNativePermission(type);
     if (!permission) return true;
 

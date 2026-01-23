@@ -5,6 +5,7 @@ import { FileData } from '../services/FileService';
 import AppText from './AppText'; 
 import CloseBtn from './CloseBtn';
 import Icon from './Icon';
+import { getFileTypeFromUri } from '../utils/helperFunctions';
 interface FileAttachmentItemProps {
     file: FileData;
     onRemove: (id: string) => void;
@@ -16,8 +17,8 @@ const FileAttachmentItem: React.FC<FileAttachmentItemProps> = ({
   onRemove, 
   onPreview 
 }) => {
-  const isImage = file.type.startsWith('image/');
-  const extension = file.name.split('.').pop()?.toUpperCase() || 'FILE';
+  const isImage = file?.type?.startsWith('image/') || getFileTypeFromUri(file?.uri || '');
+  const extension = file?.name?.split('.').pop()?.toUpperCase() || 'FILE';
 
   return (
     <View style={styles.outerWrapper}>

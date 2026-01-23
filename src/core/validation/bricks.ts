@@ -17,25 +17,39 @@ const _pincodeRegex = z.string().length(6, "Must be 6 digits").regex(/^\d+$/, "N
 /** * SECTION 2: THE HELPERS (The "Magic" Wrappers)
  * These handle the "Empty vs Required" logic for you.
  */
+// This is a helper function that ensures the field is required along with schema passed to it
 const asRequired = (schema: z.ZodString, label: string) => 
   z.string().min(1, `${label} is required`).pipe(schema);
 
 const asOptional = (schema: z.ZodString) => 
   schema.optional().or(z.literal(''));
 
+;
+
+// This is a helper function that checks if the field has a value or not( handles strings, arrays, objects, nulls)
+const hasValue = (val: unknown): boolean => {
+  if (val === null || val === undefined) return false;
+  if (typeof val === 'string') return val.trim().length > 0;
+  if (Array.isArray(val)) return val.length > 0;
+  if (typeof val === 'object') return Object.keys(val).length > 0;
+  return true;
+};
+
+const requiredBrick = (label: string | string[]) =>
+  z.any().refine(hasValue, {
+    message: `${Array.isArray(label) ? label.join(', ') : label} is required`,
+  })
+
 /** * SECTION 3: THE PUBLIC BRICKS (What you use in screens)
  * This is the clean, organized list for your team.
  */
 export const Bricks = {
   // --- UNIVERSAL REQUIRED (Handles Strings, Arrays, Objects, Nulls) ---
-  Required: (label: string | string[]) => 
-    z.any().refine((val) => {
-      if (val === null || val === undefined) return false;
-      if (typeof val === 'string') return val.trim().length > 0;
-      if (Array.isArray(val)) return val.length > 0;
-      if (typeof val === 'object') return Object.keys(val).length > 0;
-      return true;
-    }, { message: `${label} is required` }),
+  Required:requiredBrick,
+  Mandatory: {
+      required:  requiredBrick,
+      optional: z.any().optional().or(z.literal('')),
+  },  
   // EMAIL
   Email: {
     required: (label = "Email") => asRequired(_emailRegex, label),
@@ -126,6 +140,26 @@ export const Bricks = {
        .min(min, { message: `${label} must be at least ${min}` }),
     optional: z.coerce.number().optional(),
   },
+
+  Location: {
+    required: (label: string = "Location") =>
+      z
+        .object({})
+        .refine((val) => {
+          if (typeof val !== "object" || val === null) return false;
+  
+          const keys = Object.keys(val);
+          if (keys.length !== 2) return false; // must have exactly two keys
+  
+          return Object.values(val).every(
+            (v) => typeof v === "number" && !Number.isNaN(v)
+          );
+        }, {
+          message: `${Array.isArray(label) ? label.join(', ') : label} must be an object with 2 numeric values`,
+        }),
+    optional: z.any().optional().or(z.literal('')),
+  },
+  
   File: {
     required: (label = 'File') =>
       z.array(z.any()).nonempty(`${label} is required`).superRefine((val, ctx) => {

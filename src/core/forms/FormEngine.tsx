@@ -11,7 +11,8 @@ import {
   FormDateTimePicker,
   FormDependentDropdown,
   FormFilePicker,
-  FormAsyncDropdown
+  FormAsyncDropdown,
+  FormLocationPicker
 } from './FormFields'; 
 import { ConditionalWrapper } from './components/ConditionalWrapper';
 
@@ -25,6 +26,7 @@ const COMPONENT_REGISTRY: Record<string, any> = {
   dependentDropdown: FormDependentDropdown,
   asyncDropdown: FormAsyncDropdown,
   file: FormFilePicker,
+  locationPicker: FormLocationPicker
 };
 
 export const FormEngine = <T extends FieldValues>({ 

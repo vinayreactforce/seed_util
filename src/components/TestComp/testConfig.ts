@@ -66,6 +66,14 @@ export const masterConfig: FormFieldConfig<any>[] = [
       options: genderOptions,
     },
     { 
+      name: 'location', 
+      type: 'Mandatory', 
+      ui: 'locationPicker',
+      required: true,
+      label: 'Select Location', 
+      
+    },
+    { 
         name: 'category', 
         type: 'Select', 
         ui: 'dropdown', 

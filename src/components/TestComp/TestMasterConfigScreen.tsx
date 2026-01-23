@@ -5,6 +5,8 @@ import { FormEngine } from '../../core/forms/FormEngine';
 import { defaultValues, masterConfig } from './testConfig';
 import { Button } from '../../ui';
 import { FilePicker } from '../../ui/FilePicker';
+import LocationPicker from '../../ui/LocationPicker';
+import { tempDataVal } from '../../tempTest/tempData';
 
   
 export type IMasterRegistration = typeof defaultValues;
@@ -15,7 +17,7 @@ export type IMasterRegistration = typeof defaultValues;
   // useAppForm orchestrates the Zod Schema + Hook Form state
   const formMethods = useAppForm<IMasterRegistration>({
     config: masterConfig,
-    defaultValues
+    defaultValues:tempDataVal
   });
   const { control, handleSmartSubmit, formState: { isSubmitting } } = formMethods;
   const onSubmit = (data: IMasterRegistration) => {
@@ -30,13 +32,6 @@ export type IMasterRegistration = typeof defaultValues;
   return (
     <View style={{flex:1,marginHorizontal:10}}> 
     <View style={{marginTop:40}}>
-
-    <FilePicker
-      files={[]}
-      onFilesChange={()=>{}}
-      sources={["camera"]}
-      btnText="Take Photo"
-    />
     </View>
     <ScrollView showsVerticalScrollIndicator={false}>
       {/* FormEngine loops through config and maps to components */}
@@ -48,13 +43,14 @@ export type IMasterRegistration = typeof defaultValues;
 
     
     </ScrollView>
+    <View  style={{height:10}} />
     <Button 
           title={isSubmitting ? "Processing..." : "Submit Form"} 
           onPress={handleSmartSubmit(onSubmit,handleSubmitError)} 
           isDisabled={isSubmitting}
           btnContainerStyle={{marginHorizontal:10}}
         />
-        <View  style={{height:20}} />
+        <View  style={{height:60}} />
     </View>
   );
 };

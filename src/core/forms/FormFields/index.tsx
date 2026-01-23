@@ -440,7 +440,7 @@ export const FormHidden = ({ name, control, setValue, value, autoGenerate }: any
  */
 export { default as FormFilePicker } from './FormFilePicker';
 export { default as FormAsyncDropdown } from './FormAsyncDropdown';
-
+export { default as FormLocationPicker } from './FormLocationPicker';
 /**
  * STYLES
  */
